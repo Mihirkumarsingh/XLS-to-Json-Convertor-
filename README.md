@@ -1,0 +1,2 @@
+# XLS-to-Json-Convertor-
+Made a software which converts the excel file in a required JSON format.  Using Html5 FileReader (), I instantiated a FileReader object to read its contents into memory.  Simply using FileReader () won’t read the excel file therefore I used XLSX to read the file to Obtain the Current Row as CSV and converting each line to JSON format.  Finally I converted JSON into required JSON String using Regx.
