@@ -18,3 +18,8 @@ using Regx.
 
 # **Working**
 Just download index3.html file and you are ready to use it !
+
+![Screenshot](https://github.com/Mihirkumarsingh/XLS-to-Json-Convertor-/blob/master/Screenshot%20(250).png)
+----------------------------------------------------------------------------------------------------------
+![Screenshot](https://github.com/Mihirkumarsingh/XLS-to-Json-Convertor-/blob/master/Screenshot%20(251).png)
+
