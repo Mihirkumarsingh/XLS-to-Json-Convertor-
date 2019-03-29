@@ -1,0 +1,126 @@
+<html>
+
+<head>
+    <!--library for reading zip files-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <!--xlsx library-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Excel to Json Covertor</title>
+</head>
+<!--Execute a JavaScript immediately after a page has been loaded-->
+
+<body onload="load_excel();">
+    <h3>
+        <center>
+            Xls to Json Convertor</center>
+    </h3>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="container-fluid" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+        <div class="row">
+            <div class="col-sm-12">
+                <br>
+                <input type="file" id="my_file_input" />
+                <br>
+                <b>
+                    <hr>
+                    <u> Input Xls Data
+                    </u>
+                </b>
+                <br>
+                <br>
+                <div id='my_file_output'></div>
+                <br>
+                <br>
+                <hr>
+                <b>
+                    <u> Output Json Data
+                    </u>
+                </b>
+                <br>
+                <br>
+                <div id="output">
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+</body>
+<script>
+    function load_excel() {
+        var oFileIn;
+        //get the file
+        oFileIn = document.getElementById('my_file_input');
+        if (oFileIn.addEventListener) {
+            //element.addEventListener(event, function, useCapture)
+            //wherever a file is uploaded a filePicked function is runned 
+            //use Capture =A Boolean value that specifies whether the event should be executed in the capturing or in the bubbling phase. 
+            /*Event bubbling and capturing are two ways of event propagation in the HTML DOM API, when an event occurs in an element 
+            inside another element, and both elements have registered a handle for that event. The event propagation mode determines 
+            in which order the elements receive the event.*/
+            //With bubbling, the event is first captured and handled by the innermost element and then propagated to outer elements.
+            //With capturing, the event is first captured by the outermost element and propagated to the inner elements.
+            /*true - The event handler is executed in the capturing phase
+            false- Default. The event handler is executed in the bubbling phase*/
+            oFileIn.addEventListener('change', filePicked, false);
+        }
+
+    }
+    function filePicked(oEvent) {
+        // Get The File From The Input
+        //creating FileList object
+        var oFile = oEvent.target.files[0];
+        //files is a FileList of File objects. List some properties.
+        var sFilename = oFile.name;
+        // Create A File Reader HTML5
+        //instantiate a FileReader object to read its contents into memory.
+        var reader = new FileReader();
+        // Ready The Event For When A File Gets Selected
+        // the reader's onload event is fired and its result attribute can be used to access the file data.
+        reader.onload = function (e) {
+            //getting the content of a file
+            var data = e.target.result;
+            //simply using filereader() wont read the excel file use xlsx to read the file 
+            var cfb = XLSX.read(data, { type: 'binary' });
+            cfb.SheetNames.forEach(function (sheetName) {
+                // Obtain The Current Row As CSV
+                var sCSV = XLS.utils.make_csv(cfb.Sheets[sheetName]);
+                //converting each line to json format
+                var oJS = XLS.utils.sheet_to_json(cfb.Sheets[sheetName]);
+                $("#my_file_output").html(sCSV);
+                // document.getElementById('output').innerHTML = JSON.stringify(oJS);
+                var str = JSON.stringify(oJS);
+                var res = str.replace(/"/g, "\\\"");
+                var jqr = res.replace(/{/g, "\"\{");
+                var abc = jqr.replace(/}/g, "\}\"");
+                document.getElementById("output").innerHTML = abc;
+                var parsedData=JSON.parse(abc);
+                var i;
+                for(i=0;i<parsedData.length;i++){
+                    var res1 = parsedData[i].replace(/"/g, "\\\"");
+                var jqr1 = res1.replace(/{/g, "\"\{");
+                var abc1 = jqr1.replace(/}/g, "\}\"");
+                console.log(`recordString[${i}]`+ "=" + abc1+";");
+                
+                }
+                $scope.oJS = oJS;
+            });
+        };
+
+        // Tell JS To Start Reading The File.. You could delay this if desired
+        //html5 api for reading file.
+        reader.readAsBinaryString(oFile);
+    }
+</script>
+
+</html>
